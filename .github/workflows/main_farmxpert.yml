@@ -10,6 +10,7 @@ on:
   pull_request:
     branches:
       - main
+      - test/ci-cd
   workflow_dispatch:
 
 jobs:
@@ -72,3 +73,4 @@ jobs:
           slot-name: 'Production'
           package: .
           
+
