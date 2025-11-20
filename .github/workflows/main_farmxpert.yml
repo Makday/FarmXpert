@@ -9,7 +9,7 @@ on:
       - main
   pull_request:
     branches:
-      -main
+      - main
   workflow_dispatch:
 
 jobs:
@@ -26,8 +26,14 @@ jobs:
         with:
           dotnet-version: '9.x'
 
+      - name: Restore packages
+        run: dotnet restore
+
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run unit tests
+        run: dotnet test --configuration Release --no-restore --no-build
 
       - name: dotnet publish
         run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
@@ -38,30 +44,9 @@ jobs:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
 
-  test:
-    runs-on: windows-latest
-    needs: build
-    permissions:
-      contents: read
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '9.x'
-
-      - name: Restore dependencies
-        run: dotnet restore
-      
-      - name: Run unit tests
-        run: dotnet test --no-restore --configuration Release
-
-
   deploy:
     runs-on: windows-latest
-    needs: [build, test]
+    needs: build
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read #This is required for actions/checkout
