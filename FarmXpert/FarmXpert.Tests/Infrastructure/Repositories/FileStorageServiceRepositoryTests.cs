@@ -77,7 +77,7 @@ public class FileStorageServiceRepositoryTests : IDisposable
         await repo.DeleteFileAsync(filePath);
 
         // Assert
-        File.Exists(filePath).Should().BeTrue();
+        File.Exists(filePath).Should().BeFalse();
     }
 
     [Fact]
